@@ -36,8 +36,8 @@ export class LayoutTabs {
         this.header.empty();
         this.inner.empty();
         if (this.items.length == 0) {
-            this.parent.items.splice(this.parent.items.indexOf(this), 1);
             this.parent.innerDivs.splice(this.parent.items.indexOf(this), 1);
+            this.parent.items.splice(this.parent.items.indexOf(this), 1);
             this.parent.draw();
             return;
         }
@@ -55,6 +55,7 @@ export class LayoutTabs {
             tab.text("Tab " + i);
             tab.on("click", () => {
                 this.setActive(i);
+                console.log("click");
             });
             let md = false;
             let sx = 0;
@@ -64,20 +65,21 @@ export class LayoutTabs {
                 sy = this.manager.my;
                 md = true;
             });
+            let mu=(e: JQuery.Event) => {
+                md = false;
+            };
             let mm=(e: JQuery.Event) => {
                 if (md&& this.manager.dragged == undefined) {
                     this.manager.dragged = item;
                     this.items.splice(i, 1);
-                    this.draw();
                     this.manager.outer.off("mousemove", mm);
                     tab.off("mousedown");
-                    $(document).off("mouseup");
+                    $(document).off("mouseup",mu);
+                    this.draw();
                 }
             };
             this.manager.outer.on("mousemove", mm);
-            $(document).on("mouseup", (e: JQuery.Event) => {
-                md = false;
-            });
+            $(document).on("mouseup", mu);
         }
         this.setActive(this.active);
     }
@@ -96,6 +98,7 @@ export class LayoutTabs {
                 this.parent.items.unshift(item);
             }
             this.parent.draw();
+            this.parent.parent?.draw();
         } else {
             let item = new LayoutTabs(items, this.parent, this.manager);
             let size = this.parent.percentages[tid] / 2;

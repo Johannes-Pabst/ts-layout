@@ -22,8 +22,8 @@ export class LayoutList {
         this.percentages = [];
         this.middle.empty();
         if (this.items.length == 0) {
-            this.parent?.items.splice(this.parent?.items.indexOf(this), 1);
             this.parent?.innerDivs.splice(this.parent?.items.indexOf(this), 1);
+            this.parent?.items.splice(this.parent?.items.indexOf(this), 1);
             this.parent?.draw();
             return;
         }
