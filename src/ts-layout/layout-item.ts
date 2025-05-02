@@ -1,5 +1,5 @@
-export class LayoutItem{
-    constructor(public div:JQuery<HTMLElement>){
-        
+export class LayoutItem {
+    constructor(public div: JQuery<HTMLElement>) {
+
     }
 }

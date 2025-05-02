@@ -9,7 +9,7 @@ export class LayoutList {
     percentages: number[] = [];
     minWith: number = 0;
     minHeight: number = 0;
-    constructor(public dir: LayoutDir, public items: (LayoutList | LayoutTabs)[], public parent:LayoutList|undefined, public manager: LayoutManager) {
+    constructor(public dir: LayoutDir, public items: (LayoutList | LayoutTabs)[], public parent: LayoutList | undefined, public manager: LayoutManager) {
         this.outer = $("<div></div>");
         this.outer.addClass("layout-list-outer " + ["layout-list-h", "layout-list-v"][dir]);
         this.middle = $("<div></div>");
@@ -20,7 +20,9 @@ export class LayoutList {
     draw() {
         this.innerDivs = [];
         this.percentages = [];
-        this.middle.empty();
+        if (this.middle.children.length > 0) {
+            this.middle.children().detach();
+        }
         if (this.items.length == 0) {
             this.parent?.innerDivs.splice(this.parent?.items.indexOf(this), 1);
             this.parent?.items.splice(this.parent?.items.indexOf(this), 1);
@@ -48,8 +50,7 @@ export class LayoutList {
                 let line = $("<div></div>");
                 line.addClass("layout-list-line " + ["layout-list-line-h", "layout-list-line-v"][this.dir]);
                 this.middle.append(line);
-                line.on("mousedown", "touchdown", () => {
-alert("ts")
+                let md = () => {
                     this.manager.overlay.addClass("layout-manager-overlay-active");
                     let sx = this.manager.mx;
                     let sy = this.manager.my;
@@ -61,17 +62,16 @@ alert("ts")
                     let maxd = this.dir == LayoutDir.H
                         ? (this.innerDivs[i].width()! - this.items[i].minWith) * 100 / this.middle.width()!
                         : (this.innerDivs[i].height()! - this.items[i].minHeight) * 100 / this.middle.height()!;
-                    this.manager.overlay.on("mousemove.bar","touchmove.bar", (e: JQuery.Event) => {
-let dx;
-let dy;
-                        if(e.type=="touchmove.bar"){
-                        dx=e.originalEvent.touches[0].clientX!-sx;
-                        dy=e.originalEvent.touches[0].clientY!-sy;
-                        }else{
-                        dx = e.clientX! - sx;
-                        dy = e.clientY! - sy;
+                    let mm = (e: JQuery.Event) => {
+                        let dx;
+                        let dy;
+                        if (e.type == "touchmove.bar") {
+                            dx = e.touches![0].clientX! - sx;
+                            dy = e.touches![0].clientY! - sy;
+                        } else {
+                            dx = e.clientX! - sx;
+                            dy = e.clientY! - sy;
                         }
-alert("tm")
                         if (this.dir == LayoutDir.H) {
                             let d = dx / this.middle.width()! * 100;
                             d = Math.max(mind, Math.min(maxd, d));
@@ -86,20 +86,21 @@ alert("tm")
                         }
                         this.innerDivs[i - 1].css(this.dir == LayoutDir.H ? "width" : "height", this.percentages[i - 1] + "%");
                         this.innerDivs[i].css(this.dir == LayoutDir.H ? "width" : "height", this.percentages[i] + "%");
-                    });
+                    };
+                    this.manager.overlay.on("touchmove.bar", mm);
+                    this.manager.overlay.on("mousemove.bar", mm);
                     $(document).on("mouseup.bar", () => {
                         this.manager.overlay.removeClass("layout-manager-overlay-active");
-                        this.manager.overlay.off("mousemove.bar","touchmove.bar");
+                        this.manager.overlay.off("mousemove.bar");
+                        this.manager.overlay.off("touchmove.bar");
                         $(document).off("mouseup.bar");
                     });
-                });
+                };
+                line.on("mousedown", md);
+                line.on("touchstart", md);
             }
             this.middle.append(inner);
-            if (item instanceof LayoutList) {
-                inner.append(item.outer);
-            } else {
-                inner.append(item.outer);
-            }
+            inner.append(item.outer);
             if (this.dir == LayoutDir.H) {
                 inner.css("width", 100 / this.items.length + "%");
             } else {

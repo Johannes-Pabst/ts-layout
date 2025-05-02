@@ -73,4 +73,6 @@
     border-bottom: 3px solid gray;
     padding: 5px;
     padding-bottom: 0px;
+    display: flex;
+    flex-direction: row;
 }

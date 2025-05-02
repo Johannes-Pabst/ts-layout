@@ -16,10 +16,10 @@ export class LayoutTabs {
         this.outer.addClass("layout-tabs-outer");
         this.header = $("<div></div>");
         this.header.addClass("layout-tabs-header");
-        this.header.on("mouseup",()=>{
-            if(this.manager.dragged!=undefined){
+        this.header.on("mouseup", () => {
+            if (this.manager.dragged != undefined) {
                 this.items.push(this.manager.dragged);
-                this.manager.dragged=undefined;
+                this.manager.dragged = undefined;
                 this.draw();
             }
         })
@@ -34,7 +34,9 @@ export class LayoutTabs {
     private draw() {
         this.innerDivs = [];
         this.header.empty();
-        this.inner.empty();
+        if (this.inner.children().length > 0) {
+            this.inner.children().detach();
+        }
         if (this.items.length == 0) {
             this.parent.innerDivs.splice(this.parent.items.indexOf(this), 1);
             this.parent.items.splice(this.parent.items.indexOf(this), 1);
@@ -55,26 +57,25 @@ export class LayoutTabs {
             tab.text("Tab " + i);
             tab.on("click", () => {
                 this.setActive(i);
-                console.log("click");
             });
             let md = false;
             let sx = 0;
             let sy = 0;
-            tab.on("mousedown", (e: JQuery.Event) => {
+            tab.on("mousedown", () => {
                 sx = this.manager.mx;
                 sy = this.manager.my;
                 md = true;
             });
-            let mu=(e: JQuery.Event) => {
+            let mu = () => {
                 md = false;
             };
-            let mm=(e: JQuery.Event) => {
-                if (md&& this.manager.dragged == undefined) {
+            let mm = () => {
+                if (md && this.manager.dragged == undefined) {
                     this.manager.dragged = item;
                     this.items.splice(i, 1);
                     this.manager.outer.off("mousemove", mm);
                     tab.off("mousedown");
-                    $(document).off("mouseup",mu);
+                    $(document).off("mouseup", mu);
                     this.draw();
                 }
             };
@@ -87,8 +88,10 @@ export class LayoutTabs {
     public add(hv: LayoutDir, bf: 1 | -1, items: LayoutItem[]) {
         let tid = this.parent.items.indexOf(this);
         if (this.parent.dir != hv) {
-            this.parent.items[tid] = new LayoutList(hv, [this],this.parent, this.parent.manager);
-            this.parent.innerDivs[tid].empty();
+            this.parent.items[tid] = new LayoutList(hv, [this], this.parent, this.parent.manager);
+            if (this.parent.innerDivs[tid].children().length > 0) {
+                this.parent.innerDivs[tid].children().detach();
+            }
             this.parent.innerDivs[tid].append(this.parent.items[tid].outer);
             this.parent = this.parent.items[tid];
             let item = new LayoutTabs(items, this.parent, this.manager);
