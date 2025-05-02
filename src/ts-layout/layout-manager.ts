@@ -18,9 +18,14 @@ export class LayoutManager {
         outer.addClass("layout-manager-outer");
         this.inner=$("<div></div>");
         this.inner.addClass("layout-manager-inner");
-        this.outer.on("mousemove", (e:JQuery.Event)=>{
+        this.outer.on("mousemove", "touchmove", (e:JQuery.Event)=>{
+            if(e.type=="touchstart"){
+            this.mx=e.originalEvent.touches[0].clientX;
+            this.my=e.originalEvent.touches[0].clientY;
+            }else{
             this.mx=e.clientX!;
             this.my=e.clientY!;
+            }
         });
         outer.append(this.inner);
         if(root instanceof LayoutItem){

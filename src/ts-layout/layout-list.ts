@@ -48,7 +48,8 @@ export class LayoutList {
                 let line = $("<div></div>");
                 line.addClass("layout-list-line " + ["layout-list-line-h", "layout-list-line-v"][this.dir]);
                 this.middle.append(line);
-                line.on("mousedown", () => {
+                line.on("mousedown", "touchdown", () => {
+alert("ts")
                     this.manager.overlay.addClass("layout-manager-overlay-active");
                     let sx = this.manager.mx;
                     let sy = this.manager.my;
@@ -60,9 +61,17 @@ export class LayoutList {
                     let maxd = this.dir == LayoutDir.H
                         ? (this.innerDivs[i].width()! - this.items[i].minWith) * 100 / this.middle.width()!
                         : (this.innerDivs[i].height()! - this.items[i].minHeight) * 100 / this.middle.height()!;
-                    this.manager.overlay.on("mousemove.bar", (e: JQuery.Event) => {
-                        let dx = e.clientX! - sx;
-                        let dy = e.clientY! - sy;
+                    this.manager.overlay.on("mousemove.bar","touchmove.bar", (e: JQuery.Event) => {
+let dx;
+let dy;
+                        if(e.type=="touchmove.bar"){
+                        dx=e.originalEvent.touches[0].clientX!-sx;
+                        dy=e.originalEvent.touches[0].clientY!-sy;
+                        }else{
+                        dx = e.clientX! - sx;
+                        dy = e.clientY! - sy;
+                        }
+alert("tm")
                         if (this.dir == LayoutDir.H) {
                             let d = dx / this.middle.width()! * 100;
                             d = Math.max(mind, Math.min(maxd, d));
@@ -80,7 +89,7 @@ export class LayoutList {
                     });
                     $(document).on("mouseup.bar", () => {
                         this.manager.overlay.removeClass("layout-manager-overlay-active");
-                        this.manager.overlay.off("mousemove.bar");
+                        this.manager.overlay.off("mousemove.bar","touchmove.bar");
                         $(document).off("mouseup.bar");
                     });
                 });
