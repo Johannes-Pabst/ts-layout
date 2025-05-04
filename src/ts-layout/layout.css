@@ -109,13 +109,11 @@
 .layout-tabs-drop-area {
     position: absolute;
     z-index: 2;
-}
-
-.layout-tabs-drop-area-inner {
-    border: dashed 2px white;
+    display:none;
 }
 
 .layout-tabs-drop-area-left {
+    display:unset !important;
     left: 0%;
     top: 0%;
     height: 100%;
@@ -123,6 +121,7 @@
 }
 
 .layout-tabs-drop-area-right {
+    display:unset !important;
     left: 50%;
     top: 0%;
     height: 100%;
@@ -130,6 +129,7 @@
 }
 
 .layout-tabs-drop-area-top {
+    display:unset !important;
     left: 0%;
     top: 0%;
     height: 50%;
@@ -137,6 +137,7 @@
 }
 
 .layout-tabs-drop-area-bottom {
+    display:unset !important;
     left: 0%;
     top: 50%;
     height: 50%;
