@@ -19,7 +19,11 @@ export class LayoutList {
     }
     draw() {
         this.innerDivs = [];
-        this.percentages = [];
+        let kp=true;
+        if (this.percentages.length != this.items.length) {
+            this.percentages = [];
+            kp=false;
+        }
         if (this.middle.children.length > 0) {
             this.middle.children().detach();
         }
@@ -50,10 +54,14 @@ export class LayoutList {
                 let line = $("<div></div>");
                 line.addClass("layout-list-line " + ["layout-list-line-h", "layout-list-line-v"][this.dir]);
                 this.middle.append(line);
-                let md = () => {
+                let md = (e: JQuery.Event) => {
                     this.manager.overlay.addClass("layout-manager-overlay-active");
                     let sx = this.manager.mx;
                     let sy = this.manager.my;
+                    if (e.type == "touchstart") {
+                        sx = e.touches![0].clientX!;
+                        sy = e.touches![0].clientY!;
+                    }
                     let pc1 = this.percentages[i - 1];
                     let pc2 = this.percentages[i];
                     let mind = this.dir == LayoutDir.H
@@ -65,7 +73,7 @@ export class LayoutList {
                     let mm = (e: JQuery.Event) => {
                         let dx;
                         let dy;
-                        if (e.type == "touchmove.bar") {
+                        if (e.type == "touchmove") {
                             dx = e.touches![0].clientX! - sx;
                             dy = e.touches![0].clientY! - sy;
                         } else {
@@ -87,26 +95,33 @@ export class LayoutList {
                         this.innerDivs[i - 1].css(this.dir == LayoutDir.H ? "width" : "height", this.percentages[i - 1] + "%");
                         this.innerDivs[i].css(this.dir == LayoutDir.H ? "width" : "height", this.percentages[i] + "%");
                     };
-                    this.manager.overlay.on("touchmove.bar", mm);
+                    $(document).on("touchmove.bar", mm);
                     this.manager.overlay.on("mousemove.bar", mm);
-                    $(document).on("mouseup.bar", () => {
+                    let mu = () => {
                         this.manager.overlay.removeClass("layout-manager-overlay-active");
                         this.manager.overlay.off("mousemove.bar");
-                        this.manager.overlay.off("touchmove.bar");
+                        $(document).off("touchmove.bar", mm);
                         $(document).off("mouseup.bar");
-                    });
+                        $(document).off("touchend.bar");
+                    };
+                    $(document).on("mouseup.bar", mu);
+                    $(document).on("touchend.bar", mu);
                 };
                 line.on("mousedown", md);
                 line.on("touchstart", md);
             }
             this.middle.append(inner);
             inner.append(item.outer);
-            if (this.dir == LayoutDir.H) {
-                inner.css("width", 100 / this.items.length + "%");
+            if (!kp) {
+                if (this.dir == LayoutDir.H) {
+                    inner.css("width", 100 / this.items.length + "%");
+                } else {
+                    inner.css("height", 100 / this.items.length + "%");
+                }
+                this.percentages.push(100 / this.items.length);
             } else {
-                inner.css("height", 100 / this.items.length + "%");
+                inner.css(this.dir == LayoutDir.H ? "width" : "height", this.percentages[i] + "%");
             }
-            this.percentages.push(100 / this.items.length);
         }
     }
 }

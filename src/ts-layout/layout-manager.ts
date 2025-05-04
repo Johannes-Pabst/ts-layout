@@ -1,4 +1,6 @@
 import './layout.css';
+import './newwin.css';
+import './style.css';
 import { LayoutItem } from "./layout-item";
 import { LayoutDir, LayoutList } from "./layout-list";
 import { LayoutTabs } from "./layout-tabs";
@@ -11,6 +13,7 @@ export class LayoutManager {
     mx: number = 0;
     my: number = 0;
     dragged: LayoutItem | undefined = undefined;
+    completeDrag: () => void = () => { };
     constructor(public outer: JQuery<HTMLElement>, root: LayoutList | LayoutTabs | LayoutItem) {
         this.overlay = $("<div></div>");
         this.overlay.addClass("layout-manager-overlay");
@@ -19,7 +22,7 @@ export class LayoutManager {
         this.inner = $("<div></div>");
         this.inner.addClass("layout-manager-inner");
         let mm = (e: JQuery.Event) => {
-            if (e.type == "touchstart") {
+            if (e.type == "touchstart" || e.type == "touchmove") {
                 this.mx = e.touches![0].clientX;
                 this.my = e.touches![0].clientY;
             } else {
@@ -29,17 +32,46 @@ export class LayoutManager {
         };
         this.outer.on("mousemove", mm);
         this.outer.on("touchmove", mm);
+        this.outer.on("touchstart", mm);
+        $(document).on("touchstart", (e) => {
+            let element = document.elementFromPoint(e.touches![0].clientX!, e.touches![0].clientY!);
+            $(element!).trigger("customtouchstart", e);
+        })
+        $(document).on("touchmove", (e) => {
+            let element = document.elementFromPoint(e.touches![0].clientX!, e.touches![0].clientY!);
+            $(element!).trigger("customtouchmove", e);
+        })
+        $(document).on("touchend", (e) => {
+            let element = document.elementFromPoint(e.changedTouches![0].clientX!, e.changedTouches![0].clientY!);
+            $(element!).trigger("customtouchend", e);
+        })
+        $(document).on("touchleave", (e) => {
+            let element = document.elementFromPoint(e.changedTouches![0].clientX!, e.changedTouches![0].clientY!);
+            $(element!).trigger("customtouchleave", e);
+        })
         outer.append(this.inner);
         if (root instanceof LayoutItem) {
             let temp = root;
             root = new LayoutList(LayoutDir.H, [], undefined, this);
             root.items.push(new LayoutTabs([temp], root, this));
-            root.draw();
         }
         if (root instanceof LayoutTabs) {
             root = new LayoutList(LayoutDir.H, [root], undefined, this);
         }
         this.root = root;
         this.inner.append(this.root.outer);
+        root.draw();
     }
+    addSmw(t: LayoutTabs) {
+        this.root.items.push(t);
+        this.root.draw();
+        t.parent = this.root;
+    }
+}
+export function hasTouchSupport(): boolean {
+    return (
+        'ontouchstart' in window ||          // Most touch devices
+        navigator.maxTouchPoints > 0 ||      // Modern browsers/devices
+        (navigator as any).msMaxTouchPoints > 0 // Older IE/Edge
+    );
 }
