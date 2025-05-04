@@ -94,7 +94,9 @@ export class LayoutTabs {
                 $(newWin).on("beforeunload", () => {
                     this.manager.addSmw(this);
                     this.inRootWindow = true;
-                    this.popout.css("display", "unset");
+                    if(!hasTouchSupport()){
+                        this.popout.css("display", "unset");
+                    }
                     this.fullscreen.css("display", "unset");
                 })
                 $(newWin.document.body).append(this.outer);
