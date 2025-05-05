@@ -117,7 +117,9 @@ export class LayoutTabs {
             this.parent.innerDivs[this.parent.items.indexOf(this)].append(this.outer);
             this.manager.inner.css("display","unset")
             this.fullscreen.css("display","unset")
-            this.popout.css("display","unset")
+            if(!hasTouchSupport()){
+                this.popout.css("display","unset")
+            }
             this.inFullScreen=false;
         })
         this.outer.append(this.header);
