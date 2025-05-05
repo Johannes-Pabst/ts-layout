@@ -59,68 +59,13 @@ export class LayoutTabs {
         this.icons.append(this.endFullscreen);
         this.endFullscreen.css("display", "none");
         this.popout.on("click", () => {
-            this.fullscreen.css("display", "none");
-            let pc = this.parent.percentages[this.parent.items.indexOf(this)];
-            this.parent.percentages.splice(this.parent.items.indexOf(this), 1);
-            this.parent.innerDivs.splice(this.parent.items.indexOf(this), 1);
-            this.parent.items.splice(this.parent.items.indexOf(this), 1);
-            for (let i = 0; i < this.parent.percentages.length; i++) {
-                this.parent.percentages[i] += pc / this.parent.percentages.length;
-            }
-            this.parent.draw();
-            const newWin = window.open("", "_blank", "width=600,height=400")!;
-            newWin.document.writeln(`
-                <html class="newwin">
-                    <head>
-                        <title>New Window</title>
-                        <style>
-                    body { font-family: Arial, sans-serif; padding: 20px; }
-                </style>
-                    </head>
-                    <body class="newwin">
-                    </body>
-                </html>
-            `);
-            newWin.document.close();
-            ["/src/ts-layout/layout.css", "/src/ts-layout/newwin.css", "/src/ts-layout/style.css"].forEach((href) => {
-                const link = newWin.document.createElement("link");
-                link.rel = "stylesheet";
-                link.href = href;
-                newWin.document.head.appendChild(link);
-            })
-            $(newWin).on("load", () => {
-                this.popout.css("display", "none");
-                this.inRootWindow = false;
-                $(newWin).on("beforeunload", () => {
-                    this.manager.addSmw(this);
-                    this.inRootWindow = true;
-                    if(!hasTouchSupport()){
-                        this.popout.css("display", "unset");
-                    }
-                    this.fullscreen.css("display", "unset");
-                })
-                $(newWin.document.body).append(this.outer);
-            });
+            this.goPopout();
         });
         this.fullscreen.on("click",()=>{
-            this.inFullScreen=true;
-            this.fullscreen.css("display","none")
-            this.popout.css("display","none")
-            this.parent.innerDivs[this.parent.items.indexOf(this)].children().detach();
-            this.manager.overlay.append(this.outer);
-            this.manager.inner.css("display","none")
-            this.endFullscreen.css("display","unset")
+            this.goFullscreen();
         })
         this.endFullscreen.on("click",()=>{
-            this.endFullscreen.css("display","none")
-            this.manager.overlay.children().detach();
-            this.parent.innerDivs[this.parent.items.indexOf(this)].append(this.outer);
-            this.manager.inner.css("display","unset")
-            this.fullscreen.css("display","unset")
-            if(!hasTouchSupport()){
-                this.popout.css("display","unset")
-            }
-            this.inFullScreen=false;
+            this.exitFullscreen();
         })
         this.outer.append(this.header);
         this.middle = $("<div></div>");
@@ -190,6 +135,73 @@ export class LayoutTabs {
         this.inner.css("min-height", this.minHeight + "px");
         this.middle.append(this.inner);
         this.draw();
+    }
+    goFullscreen(){
+        this.inFullScreen=true;
+            this.fullscreen.css("display","none")
+            this.popout.css("display","none")
+            this.parent.innerDivs[this.parent.items.indexOf(this)].children().detach();
+            this.manager.overlay.append(this.outer);
+            this.manager.inner.css("display","none")
+            this.endFullscreen.css("display","unset")
+    }
+    exitFullscreen(){
+        this.endFullscreen.css("display","none")
+            this.manager.overlay.children().detach();
+            this.parent.innerDivs[this.parent.items.indexOf(this)].append(this.outer);
+            this.manager.inner.css("display","unset")
+            this.fullscreen.css("display","unset")
+            if(!hasTouchSupport()){
+                this.popout.css("display","unset")
+            }
+            this.inFullScreen=false;
+    }
+    goPopout(){
+        this.fullscreen.css("display", "none");
+            let pc = this.parent.percentages[this.parent.items.indexOf(this)];
+            this.parent.percentages.splice(this.parent.items.indexOf(this), 1);
+            this.parent.innerDivs.splice(this.parent.items.indexOf(this), 1);
+            this.parent.items.splice(this.parent.items.indexOf(this), 1);
+            for (let i = 0; i < this.parent.percentages.length; i++) {
+                this.parent.percentages[i] += pc / this.parent.percentages.length;
+            }
+            this.parent.draw();
+            const newWin = window.open("", "_blank", "width=600,height=400")!;
+            newWin.document.writeln(`
+                <html class="newwin">
+                    <head>
+                        <title>New Window</title>
+                        <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                </style>
+                    </head>
+                    <body class="newwin">
+                    </body>
+                </html>
+            `);
+            newWin.document.close();
+            ["/src/ts-layout/layout.css", "/src/ts-layout/newwin.css", "/src/ts-layout/style.css"].forEach((href) => {
+                const link = newWin.document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = href;
+                newWin.document.head.appendChild(link);
+            })
+            $(newWin).on("load", () => {
+                this.popout.css("display", "none");
+                this.inRootWindow = false;
+                $(newWin).on("beforeunload", () => {
+                    this.popin();
+                })
+                $(newWin.document.body).append(this.outer);
+            });
+    }
+    popin(){
+        this.manager.addSmw(this);
+                    this.inRootWindow = true;
+                    if(!hasTouchSupport()){
+                        this.popout.css("display", "unset");
+                    }
+                    this.fullscreen.css("display", "unset");
     }
     private draw() {
         this.innerDivs = [];
