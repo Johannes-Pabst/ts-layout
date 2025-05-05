@@ -18,8 +18,7 @@
 
 .layout-list-middle {
     display: flex;
-    width: -webkit-fill-available;
-    height: -webkit-fill-available;
+    flex:1;
 }
 
 .layout-list-line {

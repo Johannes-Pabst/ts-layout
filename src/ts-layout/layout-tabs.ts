@@ -20,7 +20,7 @@ export class LayoutTabs {
     minWith: number = 50;
     minHeight: number = 50;
     inRootWindow: boolean = true;
-    inFullScreen:boolean=false;
+    inFullScreen: boolean = false;
     constructor(public items: LayoutItem[], public parent: LayoutList, public manager: LayoutManager) {
         this.outer = $("<div></div>");
         this.outer.addClass("layout-tabs-outer");
@@ -48,23 +48,23 @@ export class LayoutTabs {
         this.popout = $('<svg class="layout-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="var(--color-icon)" style="display: flex; align-items: center;"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path></svg>');
         this.popout.addClass("layout-tabs-popout");
         this.icons.append(this.popout);
-        if(hasTouchSupport()) {
+        if (hasTouchSupport()) {
             this.popout.css("display", "none");
         }
-        this.fullscreen=$('<svg class="layout-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="var(--color-icon)" style="display: flex; align-items: center;"><path d="M0 0h24v24H0z" fill="none"></path><path stroke="var(--color-icon)" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg>')
+        this.fullscreen = $('<svg class="layout-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="var(--color-icon)" style="display: flex; align-items: center;"><path d="M0 0h24v24H0z" fill="none"></path><path stroke="var(--color-icon)" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg>')
         this.fullscreen.addClass("layout-tabs-fullscreen");
         this.icons.append(this.fullscreen);
-        this.endFullscreen=$('<svg class="layout-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="var(--color-icon)" style="display: flex; align-items: center;"><path d="M0 0h24v24H0z" fill="none"></path><path stroke="var(--color-icon)" d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></svg>')
+        this.endFullscreen = $('<svg class="layout-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="var(--color-icon)" style="display: flex; align-items: center;"><path d="M0 0h24v24H0z" fill="none"></path><path stroke="var(--color-icon)" d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></svg>')
         this.endFullscreen.addClass("layout-tabs-end-fullscreen");
         this.icons.append(this.endFullscreen);
         this.endFullscreen.css("display", "none");
         this.popout.on("click", () => {
             this.goPopout();
         });
-        this.fullscreen.on("click",()=>{
+        this.fullscreen.on("click", () => {
             this.goFullscreen();
         })
-        this.endFullscreen.on("click",()=>{
+        this.endFullscreen.on("click", () => {
             this.exitFullscreen();
         })
         this.outer.append(this.header);
@@ -136,38 +136,38 @@ export class LayoutTabs {
         this.middle.append(this.inner);
         this.draw();
     }
-    goFullscreen(){
-        this.inFullScreen=true;
-            this.fullscreen.css("display","none")
-            this.popout.css("display","none")
-            this.parent.innerDivs[this.parent.items.indexOf(this)].children().detach();
-            this.manager.overlay.append(this.outer);
-            this.manager.inner.css("display","none")
-            this.endFullscreen.css("display","unset")
+    goFullscreen() {
+        this.inFullScreen = true;
+        this.fullscreen.css("display", "none")
+        this.popout.css("display", "none")
+        this.parent.innerDivs[this.parent.items.indexOf(this)].children().detach();
+        this.manager.overlay.append(this.outer);
+        this.manager.inner.css("display", "none")
+        this.endFullscreen.css("display", "unset")
     }
-    exitFullscreen(){
-        this.endFullscreen.css("display","none")
-            this.manager.overlay.children().detach();
-            this.parent.innerDivs[this.parent.items.indexOf(this)].append(this.outer);
-            this.manager.inner.css("display","unset")
-            this.fullscreen.css("display","unset")
-            if(!hasTouchSupport()){
-                this.popout.css("display","unset")
-            }
-            this.inFullScreen=false;
+    exitFullscreen() {
+        this.endFullscreen.css("display", "none")
+        this.manager.overlay.children().detach();
+        this.parent.innerDivs[this.parent.items.indexOf(this)].append(this.outer);
+        this.manager.inner.css("display", "unset")
+        this.fullscreen.css("display", "unset")
+        if (!hasTouchSupport()) {
+            this.popout.css("display", "unset")
+        }
+        this.inFullScreen = false;
     }
-    goPopout(){
+    goPopout() {
         this.fullscreen.css("display", "none");
-            let pc = this.parent.percentages[this.parent.items.indexOf(this)];
-            this.parent.percentages.splice(this.parent.items.indexOf(this), 1);
-            this.parent.innerDivs.splice(this.parent.items.indexOf(this), 1);
-            this.parent.items.splice(this.parent.items.indexOf(this), 1);
-            for (let i = 0; i < this.parent.percentages.length; i++) {
-                this.parent.percentages[i] += pc / this.parent.percentages.length;
-            }
-            this.parent.draw();
-            const newWin = window.open("", "_blank", "width=600,height=400")!;
-            newWin.document.writeln(`
+        let pc = this.parent.percentages[this.parent.items.indexOf(this)];
+        this.parent.percentages.splice(this.parent.items.indexOf(this), 1);
+        this.parent.innerDivs.splice(this.parent.items.indexOf(this), 1);
+        this.parent.items.splice(this.parent.items.indexOf(this), 1);
+        for (let i = 0; i < this.parent.percentages.length; i++) {
+            this.parent.percentages[i] += pc / this.parent.percentages.length;
+        }
+        this.parent.draw();
+        const newWin = window.open("", "_blank", "width=600,height=400")!;
+        newWin.document.writeln(`
                 <html class="newwin">
                     <head>
                         <title>New Window</title>
@@ -179,29 +179,29 @@ export class LayoutTabs {
                     </body>
                 </html>
             `);
-            newWin.document.close();
-            ["/src/ts-layout/layout.css", "/src/ts-layout/newwin.css", "/src/ts-layout/style.css"].forEach((href) => {
-                const link = newWin.document.createElement("link");
-                link.rel = "stylesheet";
-                link.href = href;
-                newWin.document.head.appendChild(link);
+        newWin.document.close();
+        ["/src/ts-layout/layout.css", "/src/ts-layout/newwin.css", "/src/ts-layout/style.css"].forEach((href) => {
+            const link = newWin.document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = href;
+            newWin.document.head.appendChild(link);
+        })
+        $(newWin).on("load", () => {
+            this.popout.css("display", "none");
+            this.inRootWindow = false;
+            $(newWin).on("beforeunload", () => {
+                this.popin();
             })
-            $(newWin).on("load", () => {
-                this.popout.css("display", "none");
-                this.inRootWindow = false;
-                $(newWin).on("beforeunload", () => {
-                    this.popin();
-                })
-                $(newWin.document.body).append(this.outer);
-            });
+            $(newWin.document.body).append(this.outer);
+        });
     }
-    popin(){
+    popin() {
         this.manager.addSmw(this);
-                    this.inRootWindow = true;
-                    if(!hasTouchSupport()){
-                        this.popout.css("display", "unset");
-                    }
-                    this.fullscreen.css("display", "unset");
+        this.inRootWindow = true;
+        if (!hasTouchSupport()) {
+            this.popout.css("display", "unset");
+        }
+        this.fullscreen.css("display", "unset");
     }
     private draw() {
         this.innerDivs = [];
@@ -240,7 +240,7 @@ export class LayoutTabs {
                 md = false;
             };
             let mm = () => {
-                if (md && this.manager.dragged == undefined && this.inRootWindow&&!this.inFullScreen) {
+                if (md && this.manager.dragged == undefined && this.inRootWindow && !this.inFullScreen) {
                     this.manager.dragged = item;
                     $(".layout-tabs-overlay").removeClass("layout-tabs-overlay-inactive");
                     this.items.splice(i, 1);
