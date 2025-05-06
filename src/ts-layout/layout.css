@@ -166,3 +166,7 @@
 svg.layout-icon {
     width: auto;
 }
+
+.layout-manager-dragged-div{
+    pointer-events: none;
+}
