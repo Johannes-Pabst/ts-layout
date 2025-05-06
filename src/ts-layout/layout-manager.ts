@@ -10,6 +10,7 @@ export class LayoutManager {
     root: LayoutList;
     inner: JQuery<HTMLElement>;
     overlay: JQuery<HTMLElement>;
+    draggedDiv:JQuery<HTMLElement>;
     mx: number = 0;
     my: number = 0;
     dragged: LayoutItem | undefined = undefined;
@@ -19,6 +20,9 @@ export class LayoutManager {
         this.overlay.addClass("layout-manager-overlay");
         outer.append(this.overlay);
         outer.addClass("layout-manager-outer");
+        this.draggedDiv= $("<div></div>");
+        this.draggedDiv.addClass("layout-manager-dragged-div");
+        this.draggedDiv.css("display","none");
         this.inner = $("<div></div>");
         this.inner.addClass("layout-manager-inner");
         let mm = (e: JQuery.Event) => {
@@ -29,6 +33,9 @@ export class LayoutManager {
                 this.mx = e.clientX!;
                 this.my = e.clientY!;
             }
+            let offset=this.overlay.offset();
+            this.draggedDiv.css("left",this.mx-offset.left+"px");
+            this.draggedDiv.css("top",this.my-offset.top+"px");
         };
         this.outer.on("mousemove", mm);
         this.outer.on("touchmove", mm);
