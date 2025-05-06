@@ -33,7 +33,7 @@ export class LayoutManager {
                 this.mx = e.clientX!;
                 this.my = e.clientY!;
             }
-            let offset=this.overlay.offset();
+            let offset=this.overlay.offset()!;
             this.draggedDiv.css("left",this.mx-offset.left+"px");
             this.draggedDiv.css("top",this.my-offset.top+"px");
         };
