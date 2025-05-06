@@ -242,6 +242,8 @@ export class LayoutTabs {
             let mm = () => {
                 if (md && this.manager.dragged == undefined && this.inRootWindow && !this.inFullScreen) {
                     this.manager.dragged = item;
+                    this.manager.draggedDiv.text(item.name);
+                    this.manager.draggedDiv.css("display","unset");
                     $(".layout-tabs-overlay").removeClass("layout-tabs-overlay-inactive");
                     this.items.splice(i, 1);
                     this.innerDivs[i].css("display", "none");
