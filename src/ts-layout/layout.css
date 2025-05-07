@@ -71,6 +71,11 @@
     z-index: 1;
 }
 
+.layout-manager-overlay-passive{
+    z-index:1;
+    pointer-events:none;
+}
+
 .layout-tabs-tab {
     width: min-content;
     text-wrap-mode: nowrap;
