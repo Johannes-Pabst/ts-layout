@@ -244,6 +244,7 @@ export class LayoutTabs {
                     this.manager.dragged = item;
                     this.manager.draggedDiv.text(item.name);
                     this.manager.draggedDiv.css("display","unset");
+                    this.manager.overlay.addClass("layout-manager-overlay-passive");
                     $(".layout-tabs-overlay").removeClass("layout-tabs-overlay-inactive");
                     this.items.splice(i, 1);
                     this.innerDivs[i].css("display", "none");
