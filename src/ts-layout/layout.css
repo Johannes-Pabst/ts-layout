@@ -174,4 +174,6 @@ svg.layout-icon {
 
 .layout-manager-dragged-div{
     pointer-events: none;
+    position:absolute;
+    z-index:2;
 }
