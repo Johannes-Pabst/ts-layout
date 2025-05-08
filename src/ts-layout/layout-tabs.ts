@@ -22,6 +22,10 @@ export class LayoutTabs {
     inRootWindow: boolean = true;
     inFullScreen: boolean = false;
     constructor(public items: LayoutItem[], public parent: LayoutList, public manager: LayoutManager) {
+        for (let i = 0; i < this.items.length; i++) {
+            const it = this.items[i];
+            it.parent = this;
+        }
         this.outer = $("<div></div>");
         this.outer.addClass("layout-tabs-outer");
         this.header = $("<div></div>");
@@ -32,6 +36,7 @@ export class LayoutTabs {
                 $(".layout-tabs-drop-area").removeClass("layout-tabs-drop-area-left layout-tabs-drop-area-right layout-tabs-drop-area-top layout-tabs-drop-area-bottom");
                 this.manager.completeDrag();
                 this.items.push(this.manager.dragged);
+                this.manager.dragged.parent = this;
                 this.manager.dragged = undefined;
                 this.draw();
                 this.setActive(this.items.length - 1);
@@ -292,12 +297,14 @@ export class LayoutTabs {
             } else {
                 this.parent.items.unshift(item);
             }
+            item.parent = this.parent;
             this.parent.draw();
             this.parent.parent?.draw();
         } else {
             let item = new LayoutTabs(items, this.parent, this.manager);
             let size = this.parent.percentages[tid] / 2;
             this.parent.items.splice(bf == 1 ? tid + 1 : tid, 0, item);
+            item.parent = this.parent;
             this.parent.percentages.splice(tid, 1, size, size);
             this.parent.draw();
         }
