@@ -23,6 +23,7 @@ export class LayoutManager {
         this.draggedDiv= $("<div></div>");
         this.draggedDiv.addClass("layout-manager-dragged-div");
         this.draggedDiv.css("display","none");
+        this.overlay.append(this.draggedDiv);
         this.inner = $("<div></div>");
         this.inner.addClass("layout-manager-inner");
         let mm = (e: JQuery.Event) => {

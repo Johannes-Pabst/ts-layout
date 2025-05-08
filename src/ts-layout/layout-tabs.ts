@@ -35,6 +35,7 @@ export class LayoutTabs {
                 this.manager.dragged = undefined;
                 this.draw();
                 this.setActive(this.items.length - 1);
+                this.manager.draggedDiv.css("display", "none");
             }
         };
         this.header.on("mouseup", mu)
@@ -120,6 +121,7 @@ export class LayoutTabs {
                 this.manager.completeDrag();
                 this.add(lastDir, lastd, [this.manager.dragged]);
                 this.manager.dragged = undefined;
+                this.manager.draggedDiv.css("display", "none");
             }
         }
         this.overlay.on("mouseup", dropOverlay);
