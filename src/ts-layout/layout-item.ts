@@ -1,5 +1,7 @@
+import $ from 'jquery';
+
 export class LayoutItem {
-    constructor(public name:string,public div: JQuery<HTMLElement>) {
+    constructor(public name:string,public div: JQuery<HTMLElement>=$("<div></div>")) {
 
     }
 }
